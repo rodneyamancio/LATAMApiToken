@@ -2,6 +2,7 @@ var jwt = require('jsonwebtoken');
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
+const request = require('request')
 
 app.use(bodyParser.json());
 
@@ -24,13 +25,12 @@ app.get('/dev/mmlogistica', function(req, res) {
       algorithm: 'RS256',
       expiresIn: '1h'
     });
-
+    
     res.send(token);
     
 });
 
-app.get('/qas/mmlogistica', function(req, res) {
-
+  app.get('/qas/mmlogistica', function(req, res) {
     var GOOGLE_APPLICATION_CREDENTIALS = {
       client_email: "pubsub-publish@bc-os-logistica20-intg-dlh5.iam.gserviceaccount.com"
     };
@@ -48,8 +48,26 @@ app.get('/qas/mmlogistica', function(req, res) {
         algorithm: 'RS256',
         expiresIn: '1h'
       });
-      
-      res.send(token);
+
+      request.post('https://oauth2.googleapis.com/token', {
+        form: {
+          grant_type: grant_type,
+          assertion: token
+        }
+      }, (error, response, body) => {
+        if (error) {
+          console.error(error)
+          return
+        }
+        //res.send(body);
+        //console.log(`statusCode: ${res.statusCode}`)
+        //console.log(body)
+        var bodyJson = JSON.parse(body)
+        access_token = bodyJson.access_token
+        console.log(access_token)
+        res.send(access_token)
+
+      })
 
   });
 
