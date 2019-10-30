@@ -25,7 +25,8 @@ app.get('/dev/mmlogistica', function(req, res) {
       expiresIn: '1h'
     });
 
-    res.send(JSON.stringify(token));
+    res.send(token);
+    
 });
 
 app.get('/qas/mmlogistica', function(req, res) {
@@ -48,7 +49,7 @@ app.get('/qas/mmlogistica', function(req, res) {
         expiresIn: '1h'
       });
       
-      res.send(JSON.stringify(token));
+      res.send(token);
 
   });
 
