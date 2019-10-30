@@ -47,10 +47,12 @@ app.get('/qas/mmlogistica', function(req, res) {
         algorithm: 'RS256',
         expiresIn: '1h'
       });
-  
+      
       res.send(JSON.stringify(token));
+
   });
 
-app.listen(8000, function() {
-  console.log('Servidor rodando na porta 8000.');
+var port = process.env.PORT || 3000;
+app.listen(port, function() {
+  console.log('Server listening on port %s', port);
 });
