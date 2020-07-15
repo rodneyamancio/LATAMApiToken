@@ -71,6 +71,47 @@ app.get('/dev/mmlogistica', function(req, res) {
 
   });
 
+  app.get('/prd/mmlogistica', function(req, res) {
+    var GOOGLE_APPLICATION_CREDENTIALS = {
+      client_email: "pubsub-publish@bc-os-logistica20-prod-5ogd.iam.gserviceaccount.com"
+    };
+  
+    GOOGLE_APPLICATION_CREDENTIALS.private_key = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDdyn/4AO5iihPz\n8Ru6lL7CDGiKD9aMN5qe4iCI4gkd7ZFnQpldofPWf5KthpMG4l1v8eLmvQKoAjZi\nJtWuE/3pmYzWh458QqZg3bSGl86ETn4pZbaUbl9Q4AxvnykIU+0QZ3T1Jdj3GIQV\nUS3iSEHdlhNUGMspSOdgP70CVb8ysbOgXP6/LuizzXF1OAN/cEB6NHexMklyllzS\n8JS1SkcG/niy14xTjBn4Y0XzIDa/JpoO4EcD60Y//LnhlyJKuhBethepkgbKGSX4\nac6oW+VwUC1cjloO5x6UyfMn0VjiDQudtXkjClwVwt0Pd+1D5ooHT2kZVVGJBcgf\nzLrFqs3xAgMBAAECggEAChEgRdgk+daymSafJOo4zlip1g+/TpX82qwA4LWscZil\nj5OiSnGzaPpZZK7wYCZI1MVHO0SQ/kyQvgZtOdLbz408q0Vz3jKtl+/4OwkLl/hy\nxDDtsfG15IHcOU92w/4Ai0y8Lkm4KLRgKmeI4aB4p4oho8uMTSTApnRo1oD122Md\nKMwuUk1eoPjtiz6XSOwZ9RuMAwBjQIM2WyzGNwvJaCOuCsJcB570VnkWG5X3EEzI\n9q42xHLmpSUbjxuqmNV/2191eWHmxOgQyCBB8XZx3C86MbF3rK/P6wn2NGf3B/Mr\n5aVfnCJDzRPa7o6pnAsENN5nPWnxS8wJwoA3BGlukQKBgQD2ViDxzb0FgWAuFlb0\ny16JZEVqHM9DCoSD0L8MW1c5pbQgb5wzKgwcwdFNIZMNAyIcP32McTej0Jty29zB\nv9s9vUnOSLy8Xykx8CRJ2PLN/H7+QA1ra8Tx3Cxmmp3uL30X6GFZ6Ir9sbOlF2cj\nj2JUoHLO/fAAc6y5wnVYC6tjMwKBgQDmfd649t1TN75JjVcHZshfqMt//gjBQGJ/\nTPfsxS4bnXBeImE0RdCo3b+XVzmg/apr10JcQGZCKJo++LasWNUf5RFVlXDfzksl\neL+pJtBsBiPw9EG0KRZNwJnFJb327OTDVF99E41COEF6FcM0apDPLB3EzvzHWjIj\nQm93cRhKSwKBgBp92L0oaxOUfkt2i5N364rLBcwLnR6Qmv+yC1nA2PiSIXT7i8jU\n1Mii72dkHPRhSeHP0iiwZFNxs8X+bxdHEsTo/m7405NOiJeeQ8jNVA9jACVHrinH\nRT7ddsjyB9n9sW5Ix29r2sa9vZwbkDP6z5BaUP6BwLXLut+fUg9N8fiRAoGADit8\nzsg2cRBDPYhX6leSR/c7k4HNjfvkUkksEL1KiV4Tc2YPrcQBAPCo/6fYHiKaIIka\nRkubPcP7P5XQvSW07IILn8RRLSEkk4gp2D9PnuR9vyl1BJtmCJ+nlGwukoibw7pj\nKHBURdbph5Tg7E8E2gevSNMkzSipXmuOKLymLqMCgYEA0dCy1EYtSNf5JPXdRBSZ\nWTabNwj6W+rE6UKFrwAqMiyJ5ob7dfMJdkdv4wBYfbcMDl8opGC8y+KhAPTrUNhP\n0vW5zDCpplo3g2/iXEEu1D5ICLSAQZ4OuQ2nNHst1AD5actp331nrW7i9k2P69Ij\ntn9bJ2Z1VDQR/B4M+TmLeWY=\n-----END PRIVATE KEY-----\n";
+        
+      var jwtObject = {
+        iss: GOOGLE_APPLICATION_CREDENTIALS.client_email,
+        scope: "https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/pubsub",
+        aud: "https://oauth2.googleapis.com/token"
+      };
+      var grant_type = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
+      var cert = GOOGLE_APPLICATION_CREDENTIALS.private_key;
+      var token = jwt.sign(jwtObject, cert, {
+        algorithm: 'RS256',
+        expiresIn: '1h'
+      });
+
+      request.post('https://oauth2.googleapis.com/token', {
+        form: {
+          grant_type: grant_type,
+          assertion: token
+        }
+      }, (error, response, body) => {
+        if (error) {
+          console.error(error)
+          return
+        }
+        //res.send(body);
+        //console.log(`statusCode: ${res.statusCode}`)
+        //console.log(body)
+        var bodyJson = JSON.parse(body)
+        access_token = bodyJson.access_token
+        console.log(access_token)
+        res.send(access_token)
+
+      })
+
+  });  
+
 var port = process.env.PORT || 3000;
 app.listen(port, function() {
   console.log('Server listening on port %s', port);
