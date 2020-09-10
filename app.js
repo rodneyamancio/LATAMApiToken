@@ -30,7 +30,7 @@ app.get('/dev/mmlogistica', function(req, res) {
     
 });
 
-  app.get('/qas/mmlogistica', function(req, res) {
+  app.get('/qas_qas/mmlogistica', function(req, res) {
     var GOOGLE_APPLICATION_CREDENTIALS = {
       client_email: "pubsub-publish@bc-os-logistica20-intg-dlh5.iam.gserviceaccount.com"
     };
@@ -71,7 +71,7 @@ app.get('/dev/mmlogistica', function(req, res) {
 
   });
 
-  app.get('/prd/mmlogistica', function(req, res) {
+  app.get('/qas/mmlogistica', function(req, res) {
     var GOOGLE_APPLICATION_CREDENTIALS = {
       client_email: "pubsub-publish@bc-os-logistica20-prod-5ogd.iam.gserviceaccount.com"
     };
